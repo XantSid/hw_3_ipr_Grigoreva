@@ -1,0 +1,85 @@
+docker build -t counter-app .
+[+] Building 1.5s (10/10) FINISHED                         docker:desktop-linux
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 207B                                       0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim        1.2s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/5] FROM docker.io/library/python:3.13-slim@sha256:e48f59cdba69a3cb  0.0s
+ => => resolve docker.io/library/python:3.13-slim@sha256:e48f59cdba69a3cb  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 127B                                          0.0s
+ => CACHED [2/5] WORKDIR /app                                              0.0s
+ => CACHED [3/5] COPY app/requirements.txt .                               0.0s
+ => CACHED [4/5] RUN pip install --no-cache-dir -r requirements.txt        0.0s
+ => [5/5] COPY /app .                                                      0.0s
+ => exporting to image                                                     0.2s
+ => => exporting layers                                                    0.1s
+ => => exporting manifest sha256:99ad9894c6f22c06b82b217ef0b92143da5773d1  0.0s
+ => => exporting config sha256:4ecfd7a2cca4c3d7a64c183315fd69753a01d29bd1  0.0s
+ => => exporting attestation manifest sha256:32ff3728a759d57d1183fa963236  0.0s
+ => => exporting manifest list sha256:5db579481e1b3951671432a9da0df190da6  0.0s
+ => => naming to docker.io/library/counter-app:latest                      0.0s
+ => => unpacking to docker.io/library/counter-app:latest                   0.0s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/aan8bao6kzfqaqcpsz43q3l7w
+
+
+docker run -d \
+    --name counter \
+    -p 8080:8000 \
+    -e GREETING="Привет из Docker!" \
+    -e STORAGE=sqlite \
+    counter-app
+dd572418f9bae3fbcc06b9ef12125a378988a6117f6f713f9143a6599337917c
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker ps
+CONTAINER ID   IMAGE         COMMAND           CREATED         STATUS         PORTS                                         NAMES
+dd572418f9ba   counter-app   "python app.py"   4 seconds ago   Up 4 seconds   0.0.0.0:8080->8000/tcp, [::]:8080->8000/tcp   counter
+
+
+curl http://localhost:8080/
+{"greeting": "Привет из Docker!", "count": 0, "hostname": "dd572418f9ba", "storage": "sqlite"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i -X POST http://127.0.0.1:8080/increment
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Tue, 17 Nov 2026 09:17:08 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 102
+Cache-Control: no-store
+
+{"greeting": "Привет из Docker!", "count": 1, "hostname": "dd572418f9ba", "storage": "sqlite"}
+
+
+curl http://127.0.0.1:8080/
+{"greeting": "Привет из Docker!", "count": 1, "hostname": "dd572418f9ba", "storage": "sqlite"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i http://127.0.0.1:8080/healthz                             curl -i http://127.0.0.1:8080/healthz
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Tue, 17 Nov 2026 09:17:19 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 19
+Cache-Control: no-store
+
+{"status": "alive"}
+
+curl -i http://127.0.0.1:8080/readyz
+curl -i http://127.0.0.1:8080/readyz
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Tue, 17 Nov 2026 09:17:24 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 40
+Cache-Control: no-store
+
+{"status": "ready", "storage": "sqlite"}
+
+
+docker logs counter
+2026-11-17 09:16:07,543 listening port=8000 storage=sqlite
+2026-11-17 09:16:17,023 http 172.17.0.1 "GET / HTTP/1.1" 200 -
+2026-11-17 09:17:08,943 http 172.17.0.1 "POST /increment HTTP/1.1" 200 -
+2026-11-17 09:17:15,200 http 172.17.0.1 "GET / HTTP/1.1" 200 -
+2026-11-17 09:17:19,758 http 172.17.0.1 "GET /healthz HTTP/1.1" 200 -
+2026-11-17 09:17:24,294 http 172.17.0.1 "GET /readyz HTTP/1.1" 200 -
