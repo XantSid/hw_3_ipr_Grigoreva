@@ -1,0 +1,137 @@
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose up -d --build
+[+] Building 1.2s (12/12) FINISHED
+ => [internal] load local bake definitions                                                                                                                            0.0s
+ => => reading from stdin 582B                                                                                                                                        0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                  0.0s
+ => => transferring dockerfile: 207B                                                                                                                                  0.0s
+ => [internal] load metadata for docker.io/library/python:3.13-slim                                                                                                   0.9s
+ => [internal] load .dockerignore                                                                                                                                     0.0s
+ => => transferring context: 2B                                                                                                                                       0.0s
+ => [1/5] FROM docker.io/library/python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90                                             0.0s
+ => => resolve docker.io/library/python:3.13-slim@sha256:e48f59cdba69a3cbd9ed2cf0f348d90d45a8d350d98134cf1070bc106ee9ed90                                             0.0s
+ => [internal] load build context                                                                                                                                     0.0s
+ => => transferring context: 127B                                                                                                                                     0.0s
+ => CACHED [2/5] WORKDIR /app                                                                                                                                         0.0s
+ => CACHED [3/5] COPY app/requirements.txt .                                                                                                                          0.0s
+ => CACHED [4/5] RUN pip install --no-cache-dir -r requirements.txt                                                                                                   0.0s
+ => CACHED [5/5] COPY /app .                                                                                                                                          0.0s
+ => exporting to image                                                                                                                                                0.1s
+ => => exporting layers                                                                                                                                               0.0s
+ => => exporting manifest sha256:da64077bd83f0b99b9bbab207b37f6eb90a4424e1c2a1c77739de2d9d8a49b25                                                                     0.0s
+ => => exporting config sha256:863255f486724bf898c99d3a4d0b9c18c5f3cca99c2b6b78433608db15a8c949                                                                       0.0s
+ => => exporting attestation manifest sha256:46703d8624752c51da58526c8f98474458219edf154964659b0d60bbb87d2509                                                         0.0s
+ => => exporting manifest list sha256:a92d318978c72eef56764990c2d8faca5cef818a2fbd5e848b26d7efba6d3cdd                                                                0.0s
+ => => naming to docker.io/library/hw_3_ipr_grigoreva-app:latest                                                                                                      0.0s
+ => => unpacking to docker.io/library/hw_3_ipr_grigoreva-app:latest                                                                                                   0.0s
+ => resolving provenance for metadata file                                                                                                                            0.0s
+[+] up 3/3
+ ✔ Image hw_3_ipr_grigoreva-app         Built                                                                                                                          1.3s
+ ✔ Container hw_3_ipr_grigoreva-redis-1 Healthy                                                                                                                        0.0s
+ ✔ Container hw_3_ipr_grigoreva-app-1   Started                                                                                                                        0.1s
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose logs
+redis-1  | 1:C 20 Nov 2026 12:14:57.351 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1  | 1:C 20 Nov 2026 12:14:57.351 * Redis version=7.4.12, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1  | 1:C 20 Nov 2026 12:14:57.351 * Configuration loaded
+redis-1  | 1:M 20 Nov 2026 12:14:57.351 * monotonic clock: POSIX clock_gettime
+redis-1  | 1:M 20 Nov 2026 12:14:57.352 * Running mode=standalone, port=6379.
+redis-1  | 1:M 20 Nov 2026 12:14:57.352 * Server initialized
+redis-1  | 1:M 20 Nov 2026 12:14:57.356 * Creating AOF base file appendonly.aof.1.base.rdb on server start
+redis-1  | 1:M 20 Nov 2026 12:14:57.359 * Creating AOF incr file appendonly.aof.1.incr.aof on server start
+redis-1  | 1:M 20 Nov 2026 12:14:57.359 * Ready to accept connections tcp
+
+app-1    | 2026-11-20 12:16:48,860 listening port=8000 storage=redis
+app-1    | 2026-11-20 12:16:53,649 http 127.0.0.1 "GET /healthz HTTP/1.1" 200 -
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl http://localhost:8080/
+{"greeting": "Привет из Docker Compose!", "count": 0, "hostname": "5d3564525905", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -X POST http://localhost:8080/increment
+{"greeting": "Привет из Docker Compose!", "count": 1, "hostname": "5d3564525905", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -X POST http://localhost:8080/increment
+{"greeting": "Привет из Docker Compose!", "count": 2, "hostname": "5d3564525905", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -X POST http://localhost:8080/increment
+{"greeting": "Привет из Docker Compose!", "count": 3, "hostname": "5d3564525905", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -X POST http://localhost:8080/increment
+{"greeting": "Привет из Docker Compose!", "count": 4, "hostname": "5d3564525905", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose down
+[+] down 3/3
+ ✔ Container hw_3_ipr_grigoreva-app-1   Removed                                                                                                                        3.2s
+ ✔ Container hw_3_ipr_grigoreva-redis-1 Removed                                                                                                                        0.2s
+ ✔ Network hw_3_ipr_grigoreva_default   Removed                                                                                                                        0.1s
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose up -d
+[+] up 3/3
+ ✔ Network hw_3_ipr_grigoreva_default   Created                                                                                                                        0.0s
+ ✔ Container hw_3_ipr_grigoreva-redis-1 Healthy                                                                                                                        5.8s
+ ✔ Container hw_3_ipr_grigoreva-app-1   Started                                                                                                                        5.9s
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose ps
+NAME                         IMAGE                    COMMAND                  SERVICE   CREATED         STATUS                           PORTS
+hw_3_ipr_grigoreva-app-1     hw_3_ipr_grigoreva-app   "python app.py"          app       8 seconds ago   Up 1 second (health: starting)   0.0.0.0:8080->8000/tcp, [::]:8080->8000/tcp
+hw_3_ipr_grigoreva-redis-1   redis:7.4-alpine         "docker-entrypoint.s…"   redis     8 seconds ago   Up 7 seconds (healthy)           6379/tcp
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl http://localhost:8080/
+{"greeting": "Привет из Docker Compose!", "count": 4, "hostname": "428ec110d3b0", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose stop redis
+[+] stop 1/1
+ ✔ Container hw_3_ipr_grigoreva-redis-1 Stopped                                                                                                                        0.2s
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i http://localhost:8080/healthz
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Fri, 20 Nov 2026 12:20:29 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 19
+Cache-Control: no-store
+
+{"status": "alive"}xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i http://localhost:8080/readyz
+HTTP/1.0 503 Service Unavailable
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Fri, 20 Nov 2026 12:20:41 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 32
+Cache-Control: no-store
+
+{"error": "storage_unavailable"}xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i -X POST http://localhost:8080/increment
+HTTP/1.0 503 Service Unavailable
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Fri, 20 Nov 2026 12:20:47 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 32
+Cache-Control: no-store
+
+{"error": "storage_unavailable"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose start redis
+[+] start 1/1
+ ✔ Container hw_3_ipr_grigoreva-redis-1 Started                                                                                                                        0.2s
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ docker compose ps
+NAME                         IMAGE                    COMMAND                  SERVICE   CREATED          STATUS                            PORTS
+hw_3_ipr_grigoreva-app-1     hw_3_ipr_grigoreva-app   "python app.py"          app       50 seconds ago   Up 43 seconds (healthy)           0.0.0.0:8080->8000/tcp, [::]:8080->8000/tcp
+hw_3_ipr_grigoreva-redis-1   redis:7.4-alpine         "docker-entrypoint.s…"   redis     50 seconds ago   Up 4 seconds (health: starting)   6379/tcp
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -i http://localhost:8080/readyz
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.13.18
+Date: Fri, 20 Nov 2026 12:21:03 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 39
+Cache-Control: no-store
+
+{"status": "ready", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl http://localhost:8080/
+{"greeting": "Привет из Docker Compose!", "count": 4, "hostname": "428ec110d3b0", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl -X POST http://localhost:8080/increment
+{"greeting": "Привет из Docker Compose!", "count": 5, "hostname": "428ec110d3b0", "storage": "redis"}
+
+xantsid@xantsid-HP-ZBook-8-G1ak-14-inch-Mobile-Workstation-PC:~/prog/ami_ipr_2026/HW_Docker/hw_3_ipr_Grigoreva$ curl http://localhost:8080/
+{"greeting": "Привет из Docker Compose!", "count": 5, "hostname": "428ec110d3b0", "storage": "redis"}
